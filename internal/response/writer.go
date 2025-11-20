@@ -35,14 +35,8 @@ func writeResponseBody(buf *bytes.Buffer, req request.Request) error {
 func WriteResponse(conn net.Conn, req request.Request) error {
 	buf := bytes.NewBuffer(make([]byte, 0))
 
-	// write message size (32-bit)
-	err := binary.Write(buf, binary.BigEndian, uint32(0))
-	if err != nil {
-		return err
-	}
-
 	// write response headers
-	err = writeResponseHeaders(buf, req)
+	err := writeResponseHeaders(buf, req)
 	if err != nil {
 		return err
 	}
@@ -53,6 +47,12 @@ func WriteResponse(conn net.Conn, req request.Request) error {
 		return err
 	}
 
+	// write message size (32-bit)
+	err = binary.Write(conn, binary.BigEndian, uint32(buf.Len()))
+	if err != nil {
+		return err
+	}
+	// write both headers & body
 	_, err = conn.Write(buf.Bytes())
 
 	return err
