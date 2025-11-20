@@ -1,15 +1,16 @@
 package server
 
 import (
-	"bytes"
-	"encoding/binary"
 	"fmt"
 	"net"
 
 	"github.com/codecrafters-io/kafka-starter-go/internal/request"
+	"github.com/codecrafters-io/kafka-starter-go/internal/response"
 )
 
 func HandleNewConnection(conn net.Conn) error {
+	defer conn.Close()
+
 	// NOTE: the data hear are using big endian representation
 	payload := make([]byte, 1024) // 1K buffer
 	for {
@@ -20,18 +21,8 @@ func HandleNewConnection(conn net.Conn) error {
 		}
 
 		if size > 0 {
-			parser := request.NewRequestParser()
-			parser.Parse(payload)
-			buf := bytes.NewBuffer(make([]byte, 0, 8))
-
-			// message_size (32-bit)
-			binary.Write(buf, binary.BigEndian, uint32(0))
-
-			// header correlation_id (32-bit)
-			binary.Write(buf, binary.BigEndian, parser.CorrelationID)
-
-			conn.Write(buf.Bytes())
-			conn.Close()
+			req, _ := request.Parse(payload)
+			response.WriteResponse(conn, req)
 			return nil
 		}
 	}

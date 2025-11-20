@@ -1,19 +1,23 @@
 package request
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+)
 
-type RequestParser struct {
+type Request struct {
+	MessageSize       uint32
 	RequestAPIKey     uint16
 	RequestAPIVersion uint16
 	CorrelationID     uint32
 	ClientID          string
 }
 
-func NewRequestParser() RequestParser {
-	return RequestParser{}
-}
+func Parse(payload []byte) (Request, error) {
+	req := Request{}
 
-func (rp *RequestParser) Parse(request []byte) error {
-	rp.CorrelationID = binary.BigEndian.Uint32(request[8:12])
-	return nil
+	req.MessageSize = binary.BigEndian.Uint32(payload[:4])
+	req.RequestAPIKey = binary.BigEndian.Uint16(payload[4:6])
+	req.RequestAPIVersion = binary.BigEndian.Uint16(payload[6:8])
+	req.CorrelationID = binary.BigEndian.Uint32(payload[8:12])
+	return req, nil
 }
