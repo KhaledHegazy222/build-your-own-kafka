@@ -11,10 +11,12 @@ type KafkaAPIProcessor interface {
 	GenerateResponseBody(*request.Request) ([]byte, error)
 }
 
+var apiKeyProcessorMapper = make(map[uint16]KafkaAPIProcessor)
+
 func GetAPIProcessor(req *request.Request) (KafkaAPIProcessor, error) {
-	avP := APIVersionsProcessor{}
-	if req.RequestAPIKey == avP.GetRequestAPIKey() {
-		return &avP, nil
+	processor, exist := apiKeyProcessorMapper[req.RequestAPIKey]
+	if !exist {
+		return nil, fmt.Errorf("not supported api with value: %d", req.RequestAPIKey)
 	}
-	return nil, fmt.Errorf("not supported api with value: %d", req.RequestAPIKey)
+	return processor, nil
 }

@@ -4,7 +4,26 @@ import (
 	"bytes"
 
 	"github.com/codecrafters-io/kafka-starter-go/internal/request"
+	"github.com/codecrafters-io/kafka-starter-go/internal/utils"
 )
+
+const (
+	// Error Codes
+	NoErrorCode                 = 0
+	UnsupportedVersionErrorCode = 35
+
+	// API key
+	APIVersionsAPIKey = 18
+)
+
+var supportedAPIKeys = []APIKey{
+	{
+		apiKey:     APIVersionsAPIKey,
+		minVersion: 0,
+		maxVersion: 4,
+		tagBuffer:  0,
+	},
+}
 
 type APIVersionsProcessor struct{}
 
@@ -24,22 +43,8 @@ type APIVersionsResponse struct {
 	tagBuffer      uint8
 }
 
-const (
-	// Error Codes
-	NoErrorCode                 = 0
-	UnsupportedVersionErrorCode = 35
-
-	// API key
-	APIVersionsAPIKey = 18
-)
-
-var supportedAPIKeys = []APIKey{
-	{
-		apiKey:     APIVersionsAPIKey,
-		minVersion: 0,
-		maxVersion: 4,
-		tagBuffer:  0,
-	},
+func init() {
+	apiKeyProcessorMapper[APIVersionsAPIKey] = &APIVersionsProcessor{}
 }
 
 func (avp *APIVersionsProcessor) GetRequestAPIKey() uint16 {
@@ -60,24 +65,24 @@ func (avp *APIVersionsProcessor) GenerateResponseBody(req *request.Request) ([]b
 		tagBuffer:      0,
 	}
 	buf := new(bytes.Buffer)
-	request.WriteUint16(buf, resp.errorCode)
+	utils.WriteUint16(buf, resp.errorCode)
 
 	// TODO: Revisit unsigned variant sizes
 	// size of api keys array
-	request.WriteUint8(buf, uint8(len(resp.apiKeys)+1))
+	utils.WriteUint8(buf, uint8(len(resp.apiKeys)+1))
 
 	for _, apiKey := range resp.apiKeys {
-		request.WriteUint16(buf, apiKey.apiKey)
-		request.WriteUint16(buf, apiKey.minVersion)
-		request.WriteUint16(buf, apiKey.maxVersion)
-		request.WriteUint8(buf, apiKey.tagBuffer)
+		utils.WriteUint16(buf, apiKey.apiKey)
+		utils.WriteUint16(buf, apiKey.minVersion)
+		utils.WriteUint16(buf, apiKey.maxVersion)
+		utils.WriteUint8(buf, apiKey.tagBuffer)
 	}
 
 	// Throttle in milliseconds
-	request.WriteUint32(buf, resp.throttleTimeMs)
+	utils.WriteUint32(buf, resp.throttleTimeMs)
 
 	// Tag Buffer (empty)
-	request.WriteUint8(buf, resp.tagBuffer)
+	utils.WriteUint8(buf, resp.tagBuffer)
 
 	return buf.Bytes(), nil
 }

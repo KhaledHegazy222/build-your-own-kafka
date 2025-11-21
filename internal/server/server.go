@@ -87,9 +87,13 @@ func (s *Server) handleNewConnection(conn net.Conn) error {
 
 	req, err := request.Parse(buf)
 	if err != nil {
-		return err
+		return fmt.Errorf("parsing request error: %s", err.Error())
 	}
-	fmt.Printf("REQUEST PARSED: %+v", req)
 
-	return response.WriteResponse(conn, req)
+	err = response.WriteResponse(conn, req)
+	if err != nil {
+		return fmt.Errorf("writing response error: %s", err.Error())
+	}
+
+	return nil
 }
