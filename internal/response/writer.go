@@ -10,14 +10,14 @@ import (
 )
 
 // write response header (v0)
-func writeResponseHeaders(buf *bytes.Buffer, req request.Request) error {
+func writeResponseHeaders(buf *bytes.Buffer, req *request.Request) error {
 	// header correlation_id (32-bit)
 	err := binary.Write(buf, binary.BigEndian, req.CorrelationID)
 
 	return err
 }
 
-func writeResponseBody(buf *bytes.Buffer, req request.Request) error {
+func writeResponseBody(buf *bytes.Buffer, req *request.Request) error {
 	ap, err := processor.GetAPIProcessor(req)
 	if err != nil {
 		return nil
@@ -32,8 +32,8 @@ func writeResponseBody(buf *bytes.Buffer, req request.Request) error {
 	return err
 }
 
-func WriteResponse(conn net.Conn, req request.Request) error {
-	buf := bytes.NewBuffer(make([]byte, 0))
+func WriteResponse(conn net.Conn, req *request.Request) error {
+	buf := new(bytes.Buffer)
 
 	// write response headers
 	err := writeResponseHeaders(buf, req)

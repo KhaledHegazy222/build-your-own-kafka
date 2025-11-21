@@ -8,13 +8,13 @@ import (
 
 type KafkaAPIProcessor interface {
 	GetRequestAPIKey() uint16
-	GenerateResponseBody(request.Request) ([]byte, error)
+	GenerateResponseBody(*request.Request) ([]byte, error)
 }
 
-func GetAPIProcessor(req request.Request) (KafkaAPIProcessor, error) {
+func GetAPIProcessor(req *request.Request) (KafkaAPIProcessor, error) {
 	avP := APIVersionsProcessor{}
 	if req.RequestAPIKey == avP.GetRequestAPIKey() {
 		return &avP, nil
 	}
-	return nil, fmt.Errorf("Not Supported API with value: %d", req.RequestAPIKey)
+	return nil, fmt.Errorf("not supported api with value: %d", req.RequestAPIKey)
 }
