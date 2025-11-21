@@ -1,10 +1,9 @@
 package processor
 
 import (
-	"bytes"
-
 	"github.com/codecrafters-io/kafka-starter-go/internal/request"
-	"github.com/codecrafters-io/kafka-starter-go/internal/utils"
+	"github.com/codecrafters-io/kafka-starter-go/internal/response"
+	"github.com/codecrafters-io/kafka-starter-go/internal/types"
 )
 
 const (
@@ -16,75 +15,41 @@ const (
 	APIVersionsAPIKey = 18
 )
 
-var supportedAPIKeys = []APIKey{
+var supportedAPIKeys = []*response.APIKey{
 	{
-		apiKey:     APIVersionsAPIKey,
-		minVersion: 0,
-		maxVersion: 4,
-		tagBuffer:  0,
+		APIKey:     types.Uint16{Value: APIVersionsAPIKey},
+		MinVersion: types.Uint16{Value: 0},
+		MaxVersion: types.Uint16{Value: 4},
+		TagBuffer:  types.Uint8{Value: 0},
 	},
 	{
-		apiKey:     DescribeTopicPartitionsAPIKey,
-		minVersion: 0,
-		maxVersion: 0,
-		tagBuffer:  0,
+		APIKey:     types.Uint16{Value: DescribeTopicPartitionsAPIKey},
+		MinVersion: types.Uint16{Value: 0},
+		MaxVersion: types.Uint16{Value: 0},
+		TagBuffer:  types.Uint8{Value: 0},
 	},
 }
 
 type APIVersionsProcessor struct{}
 
-var _ KafkaAPIProcessor = (*APIVersionsProcessor)(nil)
-
-type APIKey struct {
-	apiKey     uint16
-	minVersion uint16
-	maxVersion uint16
-	tagBuffer  uint8
-}
-
-type APIVersionsResponse struct {
-	errorCode      uint16
-	apiKeys        []APIKey
-	throttleTimeMs uint32
-	tagBuffer      uint8
-}
+var _ APIProcessor = (*APIVersionsProcessor)(nil)
 
 func (avp *APIVersionsProcessor) GetRequestAPIKey() uint16 {
 	return APIVersionsAPIKey
 }
 
-func (avp *APIVersionsProcessor) GenerateResponseBody(req *request.Request) ([]byte, error) {
+func (avp *APIVersionsProcessor) Process(req *request.BaseRequest) (response.Resposne, error) {
 	var errorCode uint16
-	if req.RequestAPIVersion <= 4 {
+	if req.Headers.RequestAPIVersion.Value <= 4 {
 		errorCode = NoErrorCode
 	} else {
 		errorCode = UnsupportedVersionErrorCode
 	}
-	resp := APIVersionsResponse{
-		errorCode:      errorCode,
-		apiKeys:        supportedAPIKeys,
-		throttleTimeMs: 0,
-		tagBuffer:      0,
+	resp := response.APIVersionsResponse{
+		ErrorCode:      types.Uint16{Value: errorCode},
+		APIKeys:        types.CompactArray[*response.APIKey]{Items: supportedAPIKeys},
+		ThrottleTimeMs: types.Uint32{Value: 0},
+		TagBuffer:      types.Uint8{Value: 0},
 	}
-	buf := new(bytes.Buffer)
-	utils.WriteUint16(buf, resp.errorCode)
-
-	// TODO: Revisit unsigned variant sizes
-	// size of api keys array
-	utils.WriteUint8(buf, uint8(len(resp.apiKeys)+1))
-
-	for _, apiKey := range resp.apiKeys {
-		utils.WriteUint16(buf, apiKey.apiKey)
-		utils.WriteUint16(buf, apiKey.minVersion)
-		utils.WriteUint16(buf, apiKey.maxVersion)
-		utils.WriteUint8(buf, apiKey.tagBuffer)
-	}
-
-	// Throttle in milliseconds
-	utils.WriteUint32(buf, resp.throttleTimeMs)
-
-	// Tag Buffer (empty)
-	utils.WriteUint8(buf, resp.tagBuffer)
-
-	return buf.Bytes(), nil
+	return &resp, nil
 }

@@ -2,6 +2,7 @@ package processor
 
 import (
 	"github.com/codecrafters-io/kafka-starter-go/internal/request"
+	"github.com/codecrafters-io/kafka-starter-go/internal/response"
 )
 
 const (
@@ -10,7 +11,7 @@ const (
 
 type DescribeTopicPartitionsProcessor struct{}
 
-var _ KafkaAPIProcessor = (*DescribeTopicPartitionsProcessor)(nil)
+var _ APIProcessor = (*DescribeTopicPartitionsProcessor)(nil)
 
 type DescribeTopicPartitionsResponse struct{}
 
@@ -18,6 +19,6 @@ func (avp *DescribeTopicPartitionsProcessor) GetRequestAPIKey() uint16 {
 	return DescribeTopicPartitionsAPIKey
 }
 
-func (avp *DescribeTopicPartitionsProcessor) GenerateResponseBody(req *request.Request) ([]byte, error) {
+func (avp *DescribeTopicPartitionsProcessor) Process(req *request.BaseRequest) (response.Resposne, error) {
 	return nil, nil
 }
