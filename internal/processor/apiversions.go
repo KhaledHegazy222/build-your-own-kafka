@@ -49,10 +49,6 @@ type APIVersionsResponse struct {
 	tagBuffer      uint8
 }
 
-func init() {
-	apiKeyProcessorMapper[APIVersionsAPIKey] = &APIVersionsProcessor{}
-}
-
 func (avp *APIVersionsProcessor) GetRequestAPIKey() uint16 {
 	return APIVersionsAPIKey
 }

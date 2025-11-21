@@ -20,12 +20,12 @@ func writeResponseHeaders(buf *bytes.Buffer, req *request.Request) error {
 func writeResponseBody(buf *bytes.Buffer, req *request.Request) error {
 	ap, err := processor.GetAPIProcessor(req)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	body, err := ap.GenerateResponseBody(req)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	err = binary.Write(buf, binary.BigEndian, body)

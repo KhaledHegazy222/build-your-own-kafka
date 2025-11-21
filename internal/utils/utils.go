@@ -94,7 +94,7 @@ func ReadNullableString(buf *bytes.Buffer, isCompact bool) (string, bool, error)
 
 func ReadStringWithSize(buf *bytes.Buffer, size int) (string, error) {
 	b := buf.Next(size)
-	if len(b) < 4 {
+	if len(b) < size {
 		return "", io.ErrUnexpectedEOF
 	}
 	return string(b), nil

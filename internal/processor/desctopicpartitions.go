@@ -14,10 +14,6 @@ var _ KafkaAPIProcessor = (*DescribeTopicPartitionsProcessor)(nil)
 
 type DescribeTopicPartitionsResponse struct{}
 
-func init() {
-	apiKeyProcessorMapper[APIVersionsAPIKey] = &DescribeTopicPartitionsProcessor{}
-}
-
 func (avp *DescribeTopicPartitionsProcessor) GetRequestAPIKey() uint16 {
 	return DescribeTopicPartitionsAPIKey
 }

@@ -13,6 +13,11 @@ type KafkaAPIProcessor interface {
 
 var apiKeyProcessorMapper = make(map[uint16]KafkaAPIProcessor)
 
+func init() {
+	apiKeyProcessorMapper[APIVersionsAPIKey] = &APIVersionsProcessor{}
+	apiKeyProcessorMapper[DescribeTopicPartitionsAPIKey] = &DescribeTopicPartitionsProcessor{}
+}
+
 func GetAPIProcessor(req *request.Request) (KafkaAPIProcessor, error) {
 	processor, exist := apiKeyProcessorMapper[req.RequestAPIKey]
 	if !exist {
