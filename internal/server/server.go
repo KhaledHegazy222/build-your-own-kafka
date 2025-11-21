@@ -80,20 +80,21 @@ func (s *Server) readRequest(conn net.Conn) (*bytes.Buffer, error) {
 func (s *Server) handleNewConnection(conn net.Conn) error {
 	defer conn.Close()
 
-	buf, err := s.readRequest(conn)
-	if err != nil {
-		return fmt.Errorf("reading request error: %s", err.Error())
-	}
+	for {
+		buf, err := s.readRequest(conn)
+		if err != nil {
+			return fmt.Errorf("reading request error: %s", err.Error())
+		}
 
-	req, err := request.Parse(buf)
-	if err != nil {
-		return fmt.Errorf("parsing request error: %s", err.Error())
-	}
+		req, err := request.Parse(buf)
+		if err != nil {
+			return fmt.Errorf("parsing request error: %s", err.Error())
+		}
 
-	err = response.WriteResponse(conn, req)
-	if err != nil {
-		return fmt.Errorf("writing response error: %s", err.Error())
-	}
+		err = response.WriteResponse(conn, req)
+		if err != nil {
+			return fmt.Errorf("writing response error: %s", err.Error())
+		}
 
-	return nil
+	}
 }
