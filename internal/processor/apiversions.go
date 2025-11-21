@@ -23,6 +23,12 @@ var supportedAPIKeys = []APIKey{
 		maxVersion: 4,
 		tagBuffer:  0,
 	},
+	{
+		apiKey:     DescribeTopicPartitionsAPIKey,
+		minVersion: 0,
+		maxVersion: 0,
+		tagBuffer:  0,
+	},
 }
 
 type APIVersionsProcessor struct{}
