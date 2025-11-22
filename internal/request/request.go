@@ -10,12 +10,15 @@ type Request interface {
 	Unmarshal(io.Reader) error
 }
 
+// RequestHeaders (V2)
 type RequestHeaders struct {
 	RequestAPIKey     types.Uint16
 	RequestAPIVersion types.Uint16
 	CorrelationID     types.Uint32
 	ClientID          types.String
+	types.TagFields
 }
+
 type BaseRequest struct {
 	MessageSize types.Uint32
 	Headers     RequestHeaders
@@ -39,6 +42,11 @@ func (rh *RequestHeaders) Unmarshal(r io.Reader) error {
 	}
 
 	err = rh.ClientID.Unmarshal(r)
+	if err != nil {
+		return err
+	}
+
+	err = rh.TagFields.Unmarshal(r)
 	if err != nil {
 		return err
 	}

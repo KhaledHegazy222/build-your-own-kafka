@@ -9,6 +9,10 @@ type Int32 struct {
 	Value int32
 }
 
+func NewInt32() *Int32 {
+	return &Int32{}
+}
+
 func (i *Int32) Marshal(w io.Writer) error {
 	var buf [4]byte
 	binary.BigEndian.PutUint32(buf[:], uint32(i.Value))

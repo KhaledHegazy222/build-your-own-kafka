@@ -40,30 +40,31 @@ func (s *Server) Start() error {
 func (s *Server) handleNewConnection(conn net.Conn) error {
 	defer conn.Close()
 
-	for {
-		buf, err := s.readRequest(conn)
-		if err != nil {
-			return fmt.Errorf("reading request error: %s", err.Error())
-		}
-
-		req, err := request.Parse(buf)
-		if err != nil {
-			return fmt.Errorf("parsing request error: %s", err.Error())
-		}
-
-		proc, err := processor.GetAPIProcessor(req)
-		if err != nil {
-			return fmt.Errorf("processor lookup error: %s", err.Error())
-		}
-		resp, err := proc.Process(req)
-		if err != nil {
-			return fmt.Errorf("processing request error: %s", err.Error())
-		}
-
-		err = s.writeResponse(conn, req, resp)
-		if err != nil {
-			return fmt.Errorf("writing response error: %s", err.Error())
-		}
-
+	// for {
+	buf, err := s.readRequest(conn)
+	if err != nil {
+		return fmt.Errorf("reading request error: %s", err.Error())
 	}
+
+	req, err := request.Parse(buf)
+	if err != nil {
+		return fmt.Errorf("parsing request error: %s", err.Error())
+	}
+
+	proc, err := processor.GetAPIProcessor(req)
+	if err != nil {
+		return fmt.Errorf("processor lookup error: %s", err.Error())
+	}
+	resp, err := proc.Process(req)
+	if err != nil {
+		return fmt.Errorf("processing request error: %s", err.Error())
+	}
+
+	err = s.writeResponse(conn, req, resp)
+	if err != nil {
+		return fmt.Errorf("writing response error: %s", err.Error())
+	}
+
+	return nil
+	// }
 }

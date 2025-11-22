@@ -9,9 +9,13 @@ type Int16 struct {
 	Value int16
 }
 
+func NewInt16() *Int16 {
+	return &Int16{}
+}
+
 func (i *Int16) Marshal(w io.Writer) error {
 	var buf [2]byte
-	binary.BigEndian.PutUint32(buf[:], uint32(i.Value))
+	binary.BigEndian.PutUint16(buf[:], uint16(i.Value))
 	_, err := w.Write(buf[:])
 	return err
 }

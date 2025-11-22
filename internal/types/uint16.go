@@ -9,6 +9,10 @@ type Uint16 struct {
 	Value uint16
 }
 
+func NewUint16() *Uint16 {
+	return &Uint16{}
+}
+
 func (u *Uint16) Marshal(w io.Writer) error {
 	var buf [2]byte
 	binary.BigEndian.PutUint16(buf[:], u.Value)

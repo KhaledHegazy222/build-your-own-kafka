@@ -16,7 +16,7 @@ var apiKeyProcessorMapper = make(map[uint16]APIProcessor)
 
 func init() {
 	apiKeyProcessorMapper[APIVersionsAPIKey] = &APIVersionsProcessor{}
-	// apiKeyProcessorMapper[DescribeTopicPartitionsAPIKey] = &DescribeTopicPartitionsProcessor{}
+	apiKeyProcessorMapper[DescribeTopicPartitionsAPIKey] = &DescribeTopicPartitionsProcessor{}
 }
 
 func GetAPIProcessor(req *request.BaseRequest) (APIProcessor, error) {

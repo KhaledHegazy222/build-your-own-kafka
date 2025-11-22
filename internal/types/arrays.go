@@ -23,7 +23,7 @@ func (a *Array[T]) Marshal(w io.Writer) error {
 	return nil
 }
 
-func (a *Array[T]) Unmarshal(r io.Reader) error {
+func (a *Array[T]) Unmarshal(r io.Reader, factory func() T) error {
 	// Read the array length (Int32)
 	var lenField Int32
 	if err := lenField.Unmarshal(r); err != nil {
@@ -40,8 +40,8 @@ func (a *Array[T]) Unmarshal(r io.Reader) error {
 	a.Items = make([]T, n)
 
 	// Decode each element
-	for i := int32(0); i < n; i++ {
-		var item T
+	for i := range n {
+		item := factory()
 		if err := item.Unmarshal(r); err != nil { // ← T must implement KafkaType
 			return err
 		}

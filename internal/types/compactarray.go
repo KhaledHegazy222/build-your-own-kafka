@@ -30,12 +30,13 @@ func (a *CompactArray[T]) Marshal(w io.Writer) error {
 	return nil
 }
 
-func (a *CompactArray[T]) Unmarshal(r io.Reader, newT func() T) error {
+func (a *CompactArray[T]) Unmarshal(r io.Reader, factory func() T) error {
 	br, ok := r.(io.ByteReader)
 	if !ok {
 		br = bufio.NewReader(r)
 	}
 
+	// Read N+1 (uvarint)
 	lengthPlus1, err := readUVarInt(br)
 	if err != nil {
 		return err
@@ -47,17 +48,16 @@ func (a *CompactArray[T]) Unmarshal(r io.Reader, newT func() T) error {
 		return nil
 	}
 
-	n := lengthPlus1 - 1
+	n := int(lengthPlus1 - 1)
+	a.Items = make([]T, n)
 
-	arr := make([]T, 0, n)
-	for i := 0; i < int(n); i++ {
-		elem := newT()
-		if err := elem.Unmarshal(r); err != nil {
+	for i := range n {
+		item := factory()
+		if err := item.Unmarshal(r); err != nil {
 			return err
 		}
-		arr = append(arr, elem)
+		a.Items[i] = item
 	}
 
-	a.Items = arr
 	return nil
 }

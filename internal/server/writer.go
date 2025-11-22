@@ -7,11 +7,18 @@ import (
 
 	"github.com/codecrafters-io/kafka-starter-go/internal/request"
 	"github.com/codecrafters-io/kafka-starter-go/internal/response"
+	"github.com/codecrafters-io/kafka-starter-go/internal/types"
 )
 
-// write response header (V0)
+// write response header (V1)
 func (s *Server) writeResponseHeaders(buf *bytes.Buffer, req *request.BaseRequest) error {
-	return req.Headers.CorrelationID.Marshal(buf)
+	err := req.Headers.CorrelationID.Marshal(buf)
+	if err != nil {
+		return err
+	}
+
+	tagFields := types.Uint8{Value: 0}
+	return tagFields.Marshal(buf)
 }
 
 func (s *Server) writeResponse(conn net.Conn, req *request.BaseRequest, resp response.Resposne) error {

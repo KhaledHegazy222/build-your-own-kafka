@@ -8,6 +8,10 @@ type Int8 struct {
 	Value uint8
 }
 
+func NewInt8() *Int8 {
+	return &Int8{}
+}
+
 func (u *Int8) Marshal(w io.Writer) error {
 	_, err := w.Write([]byte{u.Value})
 	return err
