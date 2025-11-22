@@ -7,15 +7,15 @@ import (
 	"github.com/codecrafters-io/kafka-starter-go/internal/types"
 )
 
-type APIVersionsProcessor struct{}
+type APIVersionsHandler struct{}
 
-var _ APIHandler = (*APIVersionsProcessor)(nil)
+var _ APIHandler = (*APIVersionsHandler)(nil)
 
-func (ap *APIVersionsProcessor) GetRequestAPIKey() uint16 {
+func (ap *APIVersionsHandler) GetRequestAPIKey() uint16 {
 	return constants.APIVersionsAPIKey
 }
 
-func (ap *APIVersionsProcessor) Process(req *request.BaseRequest) (response.Resposne, error) {
+func (ap *APIVersionsHandler) Handle(req *request.BaseRequest) (response.Resposne, error) {
 	var errorCode uint16
 	if req.Headers.RequestAPIVersion.Value <= 4 {
 		errorCode = constants.NoErrorCode

@@ -51,13 +51,13 @@ func (s *Server) handleNewConnection(conn net.Conn) error {
 		return fmt.Errorf("parsing request error: %s", err.Error())
 	}
 
-	proc, err := handler.GetAPIHandler(req)
+	apiHandler, err := handler.GetAPIHandler(req)
 	if err != nil {
-		return fmt.Errorf("processor lookup error: %s", err.Error())
+		return fmt.Errorf("api handler lookup error: %s", err.Error())
 	}
-	resp, err := proc.Process(req)
+	resp, err := apiHandler.Handle(req)
 	if err != nil {
-		return fmt.Errorf("processing request error: %s", err.Error())
+		return fmt.Errorf("handling request error: %s", err.Error())
 	}
 
 	err = s.writeResponse(conn, req, resp)

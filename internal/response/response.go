@@ -14,4 +14,5 @@ type Resposne interface {
 type BaseResponse struct {
 	CorrelationID types.String
 	Payload       []byte
+	types.TagFields
 }

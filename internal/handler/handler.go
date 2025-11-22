@@ -11,7 +11,7 @@ import (
 
 type APIHandler interface {
 	GetRequestAPIKey() uint16
-	Process(*request.BaseRequest) (response.Resposne, error)
+	Handle(*request.BaseRequest) (response.Resposne, error)
 }
 
 type apiEntry struct {
@@ -23,7 +23,7 @@ var apiHandlerMapper = make(map[uint16]apiEntry)
 
 func init() {
 	apiHandlerMapper[constants.APIVersionsAPIKey] = apiEntry{
-		handler: &APIVersionsProcessor{},
+		handler: &APIVersionsHandler{},
 		specs: response.APISpec{
 			APIKey:     types.Uint16{Value: constants.APIVersionsAPIKey},
 			MinVersion: types.Uint16{Value: 0},
@@ -33,7 +33,7 @@ func init() {
 	}
 
 	apiHandlerMapper[constants.DescribeTopicPartitionsAPIKey] = apiEntry{
-		handler: &DescribeTopicPartitionsProcessor{},
+		handler: &DescribeTopicPartitionsHandler{},
 		specs: response.APISpec{
 			APIKey:     types.Uint16{Value: constants.DescribeTopicPartitionsAPIKey},
 			MinVersion: types.Uint16{Value: 0},

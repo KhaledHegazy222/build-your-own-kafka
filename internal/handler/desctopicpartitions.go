@@ -9,15 +9,15 @@ import (
 	"github.com/codecrafters-io/kafka-starter-go/internal/types"
 )
 
-type DescribeTopicPartitionsProcessor struct{}
+type DescribeTopicPartitionsHandler struct{}
 
-var _ APIHandler = (*DescribeTopicPartitionsProcessor)(nil)
+var _ APIHandler = (*DescribeTopicPartitionsHandler)(nil)
 
-func (dp *DescribeTopicPartitionsProcessor) GetRequestAPIKey() uint16 {
+func (dp *DescribeTopicPartitionsHandler) GetRequestAPIKey() uint16 {
 	return constants.DescribeTopicPartitionsAPIKey
 }
 
-func (dp *DescribeTopicPartitionsProcessor) Process(req *request.BaseRequest) (response.Resposne, error) {
+func (dp *DescribeTopicPartitionsHandler) Handle(req *request.BaseRequest) (response.Resposne, error) {
 	payloadReader := bytes.NewReader(req.Payload)
 	describeReq := request.DescribeTopicPartitionsRequest{
 		BaseRequest: *req,
@@ -30,7 +30,7 @@ func (dp *DescribeTopicPartitionsProcessor) Process(req *request.BaseRequest) (r
 	return dp.perpareResposne(&describeReq)
 }
 
-func (dp *DescribeTopicPartitionsProcessor) perpareResposne(req *request.DescribeTopicPartitionsRequest) (response.Resposne, error) {
+func (dp *DescribeTopicPartitionsHandler) perpareResposne(req *request.DescribeTopicPartitionsRequest) (response.Resposne, error) {
 	resp := response.DescribeTopicPartitionsResponse{
 		ThrottleTimeMs: types.Int32{Value: 0},
 		Topics:         types.CompactArray[*response.Topic]{Items: []*response.Topic{}},
