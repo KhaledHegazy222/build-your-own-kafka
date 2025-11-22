@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/codecrafters-io/kafka-starter-go/internal/processor"
+	"github.com/codecrafters-io/kafka-starter-go/internal/handler"
 	"github.com/codecrafters-io/kafka-starter-go/internal/request"
 )
 
@@ -51,7 +51,7 @@ func (s *Server) handleNewConnection(conn net.Conn) error {
 		return fmt.Errorf("parsing request error: %s", err.Error())
 	}
 
-	proc, err := processor.GetAPIProcessor(req)
+	proc, err := handler.GetAPIHandler(req)
 	if err != nil {
 		return fmt.Errorf("processor lookup error: %s", err.Error())
 	}

@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/codecrafters-io/kafka-starter-go/internal/types"
+	"github.com/codecrafters-io/kafka-starter-go/internal/utils"
 )
 
 type Request interface {
@@ -26,32 +27,7 @@ type BaseRequest struct {
 }
 
 func (rh *RequestHeaders) Unmarshal(r io.Reader) error {
-	err := rh.RequestAPIKey.Unmarshal(r)
-	if err != nil {
-		return err
-	}
-
-	err = rh.RequestAPIVersion.Unmarshal(r)
-	if err != nil {
-		return err
-	}
-
-	err = rh.CorrelationID.Unmarshal(r)
-	if err != nil {
-		return err
-	}
-
-	err = rh.ClientID.Unmarshal(r)
-	if err != nil {
-		return err
-	}
-
-	err = rh.TagFields.Unmarshal(r)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return utils.UnmarshalAll(r, &rh.RequestAPIKey, &rh.RequestAPIVersion, &rh.CorrelationID, &rh.ClientID, &rh.TagFields)
 }
 
 func (br *BaseRequest) Unmarshal(r io.Reader) error {

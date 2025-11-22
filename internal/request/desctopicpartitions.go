@@ -4,6 +4,7 @@ import (
 	"io"
 
 	"github.com/codecrafters-io/kafka-starter-go/internal/types"
+	"github.com/codecrafters-io/kafka-starter-go/internal/utils"
 )
 
 type Topic struct {
@@ -37,17 +38,7 @@ func (d *DescribeTopicPartitionsRequestBody) Unmarshal(r io.Reader) error {
 		return err
 	}
 
-	err = d.ResponsePartitionTime.Unmarshal(r)
-	if err != nil {
-		return err
-	}
-
-	err = d.Cursor.Unmarshal(r)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return utils.UnmarshalAll(r, &d.ResponsePartitionTime, &d.Cursor)
 }
 
 func (t *Topic) Marshal(w io.Writer) error {

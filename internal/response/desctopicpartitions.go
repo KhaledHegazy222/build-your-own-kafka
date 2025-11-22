@@ -45,23 +45,23 @@ type DescribeTopicPartitionsResponse struct {
 	types.TagFields
 }
 
-func (avr *DescribeTopicPartitionsResponse) Marshal(w io.Writer) error {
-	err := avr.ThrottleTimeMs.Marshal(w)
+func (dr *DescribeTopicPartitionsResponse) Marshal(w io.Writer) error {
+	err := dr.ThrottleTimeMs.Marshal(w)
 	if err != nil {
 		return err
 	}
 
-	err = avr.Topics.Marshal(w)
+	err = dr.Topics.Marshal(w)
 	if err != nil {
 		return err
 	}
 
-	err = avr.NextCursor.Marshal(w)
+	err = dr.NextCursor.Marshal(w)
 	if err != nil {
 		return err
 	}
 
-	err = avr.TagFields.Marshal(w)
+	err = dr.TagFields.Marshal(w)
 	if err != nil {
 		return err
 	}
