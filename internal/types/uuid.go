@@ -6,6 +6,10 @@ type UUID struct {
 	Value [16]byte
 }
 
+func NewUUID() *UUID {
+	return &UUID{}
+}
+
 func (u *UUID) Marshal(w io.Writer) error {
 	// Must write all 16 bytes
 	_, err := w.Write(u.Value[:])

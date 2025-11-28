@@ -44,9 +44,9 @@ func LoadConfig() error {
 			return fmt.Errorf("error unmarshaling metadata log file, err: %s", err)
 		}
 
-		log.Printf("record: %+v", *recBatch)
-		for _, rec := range recBatch.Records.Items {
-			log.Printf("INNER REC: %+v", *rec)
+		err = ParseBatch(recBatch)
+		if err != nil {
+			return fmt.Errorf("error processing batch, err: %s", err)
 		}
 	}
 

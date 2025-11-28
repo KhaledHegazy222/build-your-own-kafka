@@ -12,6 +12,12 @@ import (
 // 2. Topic record
 // 3. Partition Record
 
+const (
+	FeatureLevelRecordType = 12
+	TopicRecordType        = 2
+	PartitionRecordType    = 3
+)
+
 type MetaDataTopicRecordBatch struct {
 	BaseOffset           types.Uint64
 	BatchLength          types.Uint32
