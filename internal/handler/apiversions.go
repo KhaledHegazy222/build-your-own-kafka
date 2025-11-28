@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"bytes"
+
 	"github.com/codecrafters-io/kafka-starter-go/internal/constants"
 	"github.com/codecrafters-io/kafka-starter-go/internal/request"
 	"github.com/codecrafters-io/kafka-starter-go/internal/response"
@@ -16,6 +18,19 @@ func (ap *APIVersionsHandler) GetRequestAPIKey() uint16 {
 }
 
 func (ap *APIVersionsHandler) Handle(req *request.BaseRequest) (response.Resposne, error) {
+	payloadReader := bytes.NewReader(req.Payload)
+	apiReq := request.APIVersionsRequest{
+		BaseRequest: *req,
+	}
+	err := apiReq.Body.Unmarshal(payloadReader)
+	if err != nil {
+		return nil, err
+	}
+
+	return ap.perpareResposne(&apiReq)
+}
+
+func (ap *APIVersionsHandler) perpareResposne(req *request.APIVersionsRequest) (response.Resposne, error) {
 	var errorCode uint16
 	if req.Headers.RequestAPIVersion.Value <= 4 {
 		errorCode = constants.NoErrorCode

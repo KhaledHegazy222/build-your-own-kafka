@@ -42,7 +42,7 @@ func InitManger(metadata *metadata.Metadata) (*Manager, error) {
 		partition := Partition{
 			PartitionID:      entry.PartitionID.Value,
 			Replicas:         []uint32{},
-			SyncReplicas:     []uint32{},
+			InSyncReplicas:   []uint32{},
 			RemovingReplicas: []uint32{},
 			AddingReplicas:   []uint32{},
 			Leader:           entry.Leader.Value,
@@ -55,7 +55,7 @@ func InitManger(metadata *metadata.Metadata) (*Manager, error) {
 			partition.Replicas = append(partition.Replicas, replica.Value)
 		}
 		for _, replica := range entry.SyncReplicas.Items {
-			partition.SyncReplicas = append(partition.SyncReplicas, replica.Value)
+			partition.InSyncReplicas = append(partition.InSyncReplicas, replica.Value)
 		}
 		for _, replica := range entry.RemovingReplicas.Items {
 			partition.RemovingReplicas = append(partition.RemovingReplicas, replica.Value)
@@ -82,7 +82,7 @@ type Topic struct {
 type Partition struct {
 	PartitionID      uint32
 	Replicas         []uint32
-	SyncReplicas     []uint32
+	InSyncReplicas   []uint32
 	RemovingReplicas []uint32
 	AddingReplicas   []uint32
 	Leader           uint32

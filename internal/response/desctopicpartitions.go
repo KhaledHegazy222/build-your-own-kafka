@@ -8,14 +8,14 @@ import (
 
 type Partition struct {
 	ErrorCode              types.Int16
-	PartitionIndex         types.Int32
-	LeaderID               types.Int32
-	LeaderEpoch            types.Int32
-	ReplicaNodes           types.CompactArray[*types.Int32]
-	IsrNodes               types.CompactArray[*types.Int32]
-	EligibleLeaderReplicas types.CompactArray[*types.Int32]
-	LastKnownELR           types.CompactArray[*types.Int32]
-	OfflineReplicas        types.Int32
+	PartitionIndex         types.Uint32
+	LeaderID               types.Uint32
+	LeaderEpoch            types.Uint32
+	ReplicaNodes           types.CompactArray[*types.Uint32]
+	IsrNodes               types.CompactArray[*types.Uint32]
+	EligibleLeaderReplicas types.CompactArray[*types.Uint32]
+	LastKnownELR           types.CompactArray[*types.Uint32]
+	OfflineReplicas        types.CompactArray[*types.Uint32]
 	types.TagFields
 }
 
@@ -144,27 +144,27 @@ func (p *Partition) Unmarshal(r io.Reader) error {
 		return err
 	}
 
-	err = p.ReplicaNodes.Unmarshal(r, types.NewInt32)
+	err = p.ReplicaNodes.Unmarshal(r, types.NewUint32)
 	if err != nil {
 		return err
 	}
 
-	err = p.IsrNodes.Unmarshal(r, types.NewInt32)
+	err = p.IsrNodes.Unmarshal(r, types.NewUint32)
 	if err != nil {
 		return err
 	}
 
-	err = p.EligibleLeaderReplicas.Unmarshal(r, types.NewInt32)
+	err = p.EligibleLeaderReplicas.Unmarshal(r, types.NewUint32)
 	if err != nil {
 		return err
 	}
 
-	err = p.LastKnownELR.Unmarshal(r, types.NewInt32)
+	err = p.LastKnownELR.Unmarshal(r, types.NewUint32)
 	if err != nil {
 		return err
 	}
 
-	err = p.OfflineReplicas.Unmarshal(r)
+	err = p.OfflineReplicas.Unmarshal(r, types.NewUint32)
 	if err != nil {
 		return err
 	}
