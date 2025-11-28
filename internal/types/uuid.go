@@ -2,8 +2,10 @@ package types
 
 import "io"
 
+type RawUUID [16]byte
+
 type UUID struct {
-	Value [16]byte
+	Value RawUUID
 }
 
 func NewUUID() *UUID {

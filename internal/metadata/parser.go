@@ -1,10 +1,9 @@
-package config
+package metadata
 
 import (
 	"bytes"
 	"fmt"
 	"io"
-	"log"
 
 	"github.com/codecrafters-io/kafka-starter-go/internal/types"
 	"github.com/codecrafters-io/kafka-starter-go/internal/utils"
@@ -20,26 +19,33 @@ func ParseBatch(batch *MetaDataTopicRecordBatch) error {
 			return err
 		}
 
+		var p Processor
+
 		switch baseRecord.Type.Value {
 		case FeatureLevelRecordType:
-			fr := FeatureLevelRecord{BaseRecord: baseRecord}
+			fr := &FeatureLevelRecord{BaseRecord: baseRecord}
 			err = fr.Unmarshal(valueBuffer)
-			log.Printf("feature record: %+v", fr)
+			p = fr
 
 		case TopicRecordType:
-			tr := TopicRecord{BaseRecord: baseRecord}
+			tr := &TopicRecord{BaseRecord: baseRecord}
 			err = tr.Unmarshal(valueBuffer)
-			log.Printf("topic record: %+v", tr)
+			p = tr
 
 		case PartitionRecordType:
-			pr := PartitionRecord{BaseRecord: baseRecord}
+			pr := &PartitionRecord{BaseRecord: baseRecord}
 			err = pr.Unmarshal(valueBuffer)
-			log.Printf("partition record: %+v", pr)
+			p = pr
 
 		default:
 			err = fmt.Errorf("not supported type (%d)", baseRecord.Type.Value)
 		}
 
+		if err != nil {
+			return err
+		}
+
+		err = p.Process()
 		if err != nil {
 			return err
 		}
