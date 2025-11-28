@@ -40,31 +40,29 @@ func (s *Server) Start() error {
 func (s *Server) handleNewConnection(conn net.Conn) error {
 	defer conn.Close()
 
-	// for {
-	buf, err := s.readRequest(conn)
-	if err != nil {
-		return fmt.Errorf("reading request error: %s", err.Error())
-	}
+	for {
+		buf, err := s.readRequest(conn)
+		if err != nil {
+			return fmt.Errorf("reading request error: %s", err.Error())
+		}
 
-	req, err := request.Parse(buf)
-	if err != nil {
-		return fmt.Errorf("parsing request error: %s", err.Error())
-	}
+		req, err := request.Parse(buf)
+		if err != nil {
+			return fmt.Errorf("parsing request error: %s", err.Error())
+		}
 
-	apiHandler, err := handler.GetAPIHandler(req)
-	if err != nil {
-		return fmt.Errorf("api handler lookup error: %s", err.Error())
-	}
-	resp, err := apiHandler.Handle(req)
-	if err != nil {
-		return fmt.Errorf("handling request error: %s", err.Error())
-	}
+		apiHandler, err := handler.GetAPIHandler(req)
+		if err != nil {
+			return fmt.Errorf("api handler lookup error: %s", err.Error())
+		}
+		resp, err := apiHandler.Handle(req)
+		if err != nil {
+			return fmt.Errorf("handling request error: %s", err.Error())
+		}
 
-	err = s.writeResponse(conn, req, resp)
-	if err != nil {
-		return fmt.Errorf("writing response error: %s", err.Error())
+		err = s.writeResponse(conn, req, resp)
+		if err != nil {
+			return fmt.Errorf("writing response error: %s", err.Error())
+		}
 	}
-
-	return nil
-	// }
 }

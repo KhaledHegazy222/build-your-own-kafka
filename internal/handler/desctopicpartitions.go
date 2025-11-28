@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"log"
 
 	"github.com/codecrafters-io/kafka-starter-go/internal/constants"
 	"github.com/codecrafters-io/kafka-starter-go/internal/manager"
@@ -27,6 +28,8 @@ func (dp *DescribeTopicPartitionsHandler) Handle(req *request.BaseRequest) (resp
 	if err != nil {
 		return nil, err
 	}
+
+	log.Printf("DescribeTopicPartions request: %+v", describeReq)
 
 	return dp.perpareResposne(&describeReq)
 }
@@ -91,5 +94,6 @@ func (dp *DescribeTopicPartitionsHandler) perpareResposne(req *request.DescribeT
 	}
 	resp.NextCursor.Value = 0xFF // -1 for null
 
+	log.Printf("DescribeTopicPartions resposne: %+v", resp)
 	return &resp, nil
 }

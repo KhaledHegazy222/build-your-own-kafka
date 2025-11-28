@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"log"
 
 	"github.com/codecrafters-io/kafka-starter-go/internal/constants"
 	"github.com/codecrafters-io/kafka-starter-go/internal/request"
@@ -27,6 +28,7 @@ func (ap *APIVersionsHandler) Handle(req *request.BaseRequest) (response.Resposn
 		return nil, err
 	}
 
+	log.Printf("APIVersions request: %+v", apiReq)
 	return ap.perpareResposne(&apiReq)
 }
 
@@ -43,6 +45,8 @@ func (ap *APIVersionsHandler) perpareResposne(req *request.APIVersionsRequest) (
 		ThrottleTimeMs: types.Uint32{Value: 0},
 		TagBuffer:      types.Uint8{Value: 0},
 	}
+
+	log.Printf("APIVersions resposne: %+v", resp)
 	return &resp, nil
 }
 

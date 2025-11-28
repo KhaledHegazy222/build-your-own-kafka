@@ -23,7 +23,7 @@ func GetManager() (*Manager, error) {
 }
 
 func InitManger(metadata *metadata.Metadata) (*Manager, error) {
-	m := &Manager{
+	manager = &Manager{
 		topicsByUUID: map[uuid.UUID]*Topic{},
 		topicsByName: map[string]*Topic{},
 	}
@@ -34,8 +34,8 @@ func InitManger(metadata *metadata.Metadata) (*Manager, error) {
 			UUID:       topicUUID,
 			Partitions: []Partition{},
 		}
-		m.topicsByName[entry.Name.Value] = &topic
-		m.topicsByUUID[topicUUID] = &topic
+		manager.topicsByName[entry.Name.Value] = &topic
+		manager.topicsByUUID[topicUUID] = &topic
 	}
 	for _, entry := range metadata.Partitions {
 		topicUUID := uuid.UUID(entry.TopicUUID.Value)
@@ -67,7 +67,7 @@ func InitManger(metadata *metadata.Metadata) (*Manager, error) {
 			partition.Directories = append(partition.Directories, uuid.UUID(directory.Value))
 		}
 
-		m.topicsByUUID[topicUUID].Partitions = append(m.topicsByUUID[topicUUID].Partitions, partition)
+		manager.topicsByUUID[topicUUID].Partitions = append(manager.topicsByUUID[topicUUID].Partitions, partition)
 	}
 
 	return manager, nil
