@@ -1,100 +1,53 @@
 package config
 
 import (
-	"io"
-
-	"github.com/codecrafters-io/kafka-starter-go/internal/types"
-	"github.com/codecrafters-io/kafka-starter-go/internal/utils"
+	"bytes"
+	"fmt"
+	"log"
+	"os"
 )
 
-// 3 record types
-// 1. Feature level record type
-// 2. Topic record
-// 3. Partition Record
+type Config struct{}
 
-type MetaDataTopicRecordBatch struct {
-	BaseOffset           types.Uint64
-	BatchLength          types.Uint32
-	PartitionLeaderEpoch types.Uint32
-	MagicByte            types.Uint8
-	CRC                  types.Uint32
-	Attributes           types.Uint16
-	LastOffsetDelta      types.Uint32
-	BaseTimestamp        types.Uint64
-	MaxTimestamp         types.Uint64
-	ProducerID           types.Uint64
-	ProducerEpoch        types.Uint16
-	BaseSequence         types.Uint32
-	Records              types.Array[*MetaDataTopicRecord]
+var appConfig *Config
+
+func GetConfig() (*Config, error) {
+	if appConfig == nil {
+		return nil, fmt.Errorf("config is not initialized")
+	}
+
+	return appConfig, nil
 }
 
-type MetaDataTopicRecord struct {
-	Length         types.VarInt
-	Attributes     types.Uint8
-	TimestampDelta types.VarInt
-	OffsetDelta    types.VarInt
-	KeyLength      types.VarInt
-	Key            []byte
-	ValueLength    types.VarInt
-	Value          []byte
-	HeadersCount   types.UVarInt
-}
+func LoadConfig() error {
+	appConfig = &Config{}
 
-func (mr *MetaDataTopicRecord) Marshal(w io.Writer) error {
-	err := utils.MarshalAll(w, &mr.Length, &mr.Attributes, &mr.TimestampDelta, &mr.OffsetDelta, &mr.KeyLength)
+	// filePath := " ./resources/metadata/cluster-metadata.log"
+	filePath := "/home/khaled/Desktop/work/codecrafters-kafka-go/resources/metadata/cluster-metadata.log"
+	_, err := os.Stat(filePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("metadata log file (%s) doesn't exist", filePath)
 	}
 
-	_, err = w.Write(mr.Key)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("error opening file (%s), err: %s", filePath, err)
 	}
 
-	err = mr.ValueLength.Marshal(w)
-	if err != nil {
-		return err
-	}
+	buf := bytes.NewBuffer(data)
 
-	_, err = w.Write(mr.Value)
-	if err != nil {
-		return err
-	}
+	for buf.Len() != 0 {
+		log.Printf("Available bytes: %d", buf.Available())
+		recBatch := new(MetaDataTopicRecordBatch)
+		err := recBatch.Unmarshal(buf)
+		if err != nil {
+			return fmt.Errorf("error unmarshaling metadata log file, err: %s", err)
+		}
 
-	err = mr.HeadersCount.Marshal(w)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (mr *MetaDataTopicRecord) Unmarshal(r io.Reader) error {
-	err := utils.UnmarshalAll(r, &mr.Length, &mr.Attributes, &mr.TimestampDelta, &mr.OffsetDelta, &mr.KeyLength)
-	if err != nil {
-		return err
-	}
-
-	mr.Key = make([]byte, mr.KeyLength.Value)
-	_, err = r.Read(mr.Key)
-	if err != nil {
-		return err
-	}
-
-	err = mr.ValueLength.Unmarshal(r)
-	if err != nil {
-		return err
-	}
-
-	mr.Value = make([]byte, mr.ValueLength.Value)
-	_, err = r.Read(mr.Value)
-	if err != nil {
-		return err
-	}
-
-	err = mr.HeadersCount.Unmarshal(r)
-	if err != nil {
-		return err
+		log.Printf("record: %+v", *recBatch)
+		for _, rec := range recBatch.Records.Items {
+			log.Printf("INNER REC: %+v", *rec)
+		}
 	}
 
 	return nil

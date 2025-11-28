@@ -14,14 +14,14 @@ func NewInt64() *Int64 {
 }
 
 func (i *Int64) Marshal(w io.Writer) error {
-	var buf [4]byte
+	var buf [8]byte
 	binary.BigEndian.PutUint64(buf[:], uint64(i.Value))
 	_, err := w.Write(buf[:])
 	return err
 }
 
 func (i *Int64) Unmarshal(r io.Reader) error {
-	var buf [4]byte
+	var buf [8]byte
 	_, err := r.Read(buf[:])
 	if err != nil {
 		return err
