@@ -1,34 +1,43 @@
-[![progress-banner](https://backend.codecrafters.io/progress/kafka/9cba8de8-5ce2-4a01-9060-3c9d7436d911)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# Kafka Broker (Custom Implementation in Go)
 
-This is a starting point for Go solutions to the
-["Build Your Own Kafka" Challenge](https://codecrafters.io/challenges/kafka).
+A lightweight Kafka broker implementation written from scratch in **Golang**, focusing on understanding and implementing Kafka's **internal protocol**. This project is not meant to replace Apache Kafka but to serve as a learning tool and a protocol reference implementation.
 
-In this challenge, you'll build a toy Kafka clone that's capable of accepting
-and responding to ApiVersions & Fetch API requests. You'll also learn about
-encoding and decoding messages using the Kafka wire protocol. You'll also learn
-about handling the network protocol, event loops, TCP sockets and more.
+## 🚀 Overview
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+This broker implements the fundamental Kafka protocol API calls that allow clients to interact with a minimal but functional Kafka-like system.
 
-# Passing the first stage
+### Supported API Keys
 
-The entry point for your Kafka implementation is in `app/main.go`. Study and
-uncomment the relevant code, and push your changes to pass the first stage:
+* **ApiVersions** – Allows clients to discover which API versions the broker supports.
+* **DescribeTopicPartitions** – Returns metadata about topics and partitions.
+* **Produce** *(TODO)* – Accept and store published messages.
+* **Consumer APIs** *(TODO)* – Manage offset fetch, message consumption, and group coordination.
 
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
+
+## 📦 Goals of This Project
+
+* Understand the **Kafka protocol** at the binary level
+* Implement a real TCP server that speaks Kafka's language
+* Gain deep insight into how brokers handle metadata, versioning, and requests
+* Create a foundation that can evolve into a more complete broker
+
+
+## ▶️ Running the Broker
+
+```bash
+go run cmd/main.go
 ```
 
-That's all!
+The broker listens on **localhost:9092** by default.
 
-# Stage 2 & beyond
 
-Note: This section is for stages 2 and beyond.
+## 📚 Status
 
-1. Ensure you have `go (1.24)` installed locally
-1. Run `./your_program.sh` to run your Kafka broker, which is implemented in
-   `app/main.go`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+| API Key                 | Status        |
+| ----------------------- | ------------- |
+| ApiVersions             | ✅ Implemented |
+| DescribeTopicPartitions | ✅ Implemented |
+| Produce                 | 🚧 TODO    |
+| Consumer APIs           | 🚧 TODO    |
+
+---
