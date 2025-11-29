@@ -4,13 +4,14 @@ import (
 	"io"
 
 	"github.com/codecrafters-io/kafka-starter-go/internal/types"
+	"github.com/codecrafters-io/kafka-starter-go/internal/utils"
 )
 
 type Partition struct {
 	ErrorCode              types.Int16
-	PartitionIndex         types.Uint32
-	LeaderID               types.Uint32
-	LeaderEpoch            types.Uint32
+	PartitionIndex         types.Int32
+	LeaderID               types.Int32
+	LeaderEpoch            types.Int32
 	ReplicaNodes           types.CompactArray[*types.Uint32]
 	IsrNodes               types.CompactArray[*types.Uint32]
 	EligibleLeaderReplicas types.CompactArray[*types.Uint32]
@@ -39,8 +40,9 @@ type NextCursor struct {
 type DescribeTopicPartitionsResponse struct {
 	ThrottleTimeMs types.Int32
 	Topics         types.CompactArray[*Topic]
-	NextCursor     types.Uint8
-	// NextCursor     NextCursor
+	// TODO: Revisit this
+	NextCursor types.Uint8
+	// NextCursor NextCursor
 
 	types.TagFields
 }
@@ -253,6 +255,10 @@ func (p *Topic) Unmarshal(r io.Reader) error {
 	}
 
 	return nil
+}
+
+func (c *NextCursor) Marshal(w io.Writer) error {
+	return utils.MarshalAll(w, &c.TopicName, &c.PartitionIndex, &c.TagFields)
 }
 
 func paritionFactory() *Partition {

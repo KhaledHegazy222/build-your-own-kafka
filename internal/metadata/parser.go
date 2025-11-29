@@ -91,15 +91,15 @@ func (tr *TopicRecord) Unmarshal(r io.Reader) error {
 type PartitionRecord struct {
 	BaseRecord
 	Version          types.Uint8
-	PartitionID      types.Uint32
+	PartitionID      types.Int32
 	TopicUUID        types.UUID
 	Replicas         types.CompactArray[*types.Uint32]
 	SyncReplicas     types.CompactArray[*types.Uint32]
 	RemovingReplicas types.CompactArray[*types.Uint32]
 	AddingReplicas   types.CompactArray[*types.Uint32]
-	Leader           types.Uint32
-	LeaderEpoch      types.Uint32
-	PartitionEpoch   types.Uint32
+	Leader           types.Int32
+	LeaderEpoch      types.Int32
+	PartitionEpoch   types.Int32
 	Directories      types.CompactArray[*types.UUID]
 	types.TagFields
 }

@@ -2,6 +2,7 @@ package manager
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/codecrafters-io/kafka-starter-go/internal/metadata"
 	"github.com/google/uuid"
@@ -28,6 +29,7 @@ func InitManger(metadata *metadata.Metadata) (*Manager, error) {
 		topicsByName: map[string]*Topic{},
 	}
 	for _, entry := range metadata.Topics {
+		log.Printf("NEW TOPIC: %s", entry.Name.Value)
 		topicUUID := uuid.UUID(entry.TopicUUID.Value)
 		topic := Topic{
 			Name:       entry.Name.Value,
@@ -38,6 +40,7 @@ func InitManger(metadata *metadata.Metadata) (*Manager, error) {
 		manager.topicsByUUID[topicUUID] = &topic
 	}
 	for _, entry := range metadata.Partitions {
+		log.Printf("NEW Partition: %d", entry.PartitionID.Value)
 		topicUUID := uuid.UUID(entry.TopicUUID.Value)
 		partition := Partition{
 			PartitionID:      entry.PartitionID.Value,
@@ -80,14 +83,14 @@ type Topic struct {
 }
 
 type Partition struct {
-	PartitionID      uint32
+	PartitionID      int32
 	Replicas         []uint32
 	InSyncReplicas   []uint32
 	RemovingReplicas []uint32
 	AddingReplicas   []uint32
-	Leader           uint32
-	LeaderEpoch      uint32
-	PartitionEpoch   uint32
+	Leader           int32
+	LeaderEpoch      int32
+	PartitionEpoch   int32
 	Directories      []uuid.UUID
 }
 

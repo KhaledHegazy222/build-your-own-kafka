@@ -64,9 +64,9 @@ func (dp *DescribeTopicPartitionsHandler) perpareResposne(req *request.DescribeT
 
 			partitionResp[idx] = &response.Partition{
 				ErrorCode:              types.Int16{Value: constants.NoErrorCode},
-				PartitionIndex:         types.Uint32{Value: foundPartition.PartitionID},
-				LeaderID:               types.Uint32{Value: foundPartition.Leader},
-				LeaderEpoch:            types.Uint32{Value: foundPartition.LeaderEpoch},
+				PartitionIndex:         types.Int32{Value: foundPartition.PartitionID},
+				LeaderID:               types.Int32{Value: foundPartition.Leader},
+				LeaderEpoch:            types.Int32{Value: foundPartition.LeaderEpoch},
 				ReplicaNodes:           types.CompactArray[*types.Uint32]{Items: []*types.Uint32{}},
 				IsrNodes:               types.CompactArray[*types.Uint32]{Items: []*types.Uint32{}},
 				EligibleLeaderReplicas: types.CompactArray[*types.Uint32]{Items: []*types.Uint32{}},
@@ -90,8 +90,13 @@ func (dp *DescribeTopicPartitionsHandler) perpareResposne(req *request.DescribeT
 			// Authorized operations
 			TopicAuthorizedOperations: types.Int32{Value: 0b0000110111111000},
 		})
+		log.Printf("FOUND TOPIC: %+v", *resp.Topics.Items[len(resp.Topics.Items)-1])
+		for _, p := range resp.Topics.Items[len(resp.Topics.Items)-1].Partitions.Items {
+			log.Printf("FOUND Partition: %+v", *p)
+		}
 
 	}
+	// TODO: revisit this
 	resp.NextCursor.Value = 0xFF // -1 for null
 
 	log.Printf("DescribeTopicPartions resposne: %+v", resp)
